@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Http\Middleware\EnsurePostOwnership;
+use App\Http\Middleware\EnsureRole;
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Models\User;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            HandleInertiaRequests::class,
+        ]);
+
+        $middleware->alias([
+            'role' => EnsureRole::class,
+            'post.owner' => EnsurePostOwnership::class,
+        ]);
+
+        $middleware->redirectGuestsTo(fn (Request $request): string => route('login'));
+
+        $middleware->redirectUsersTo(
+            fn (Request $request): string => $request->user()?->role === User::ROLE_ADMIN
+                ? route('admin.users.index')
+                : route('dashboard.posts.index')
+        );
+    })
+    ->withExceptions(function (Exceptions $exceptions): void {
+        //
+    })->create();
