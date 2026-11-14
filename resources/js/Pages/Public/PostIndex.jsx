@@ -37,11 +37,11 @@ function ArticleCard({ post }) {
                 <div>
                     <CategoryBadge category={post.category} />
                 </div>
-                <h3 className="mt-3 text-lg font-semibold leading-snug text-slate-900">
+                <h2 className="mt-3 text-lg font-semibold leading-snug text-slate-900">
                     <Link href={`/articles/${post.slug}`} className="hover:text-indigo-700">
                         {post.title}
                     </Link>
-                </h3>
+                </h2>
                 {post.excerpt && (
                     <p className="mt-2 line-clamp-3 text-sm text-slate-600">{post.excerpt}</p>
                 )}
