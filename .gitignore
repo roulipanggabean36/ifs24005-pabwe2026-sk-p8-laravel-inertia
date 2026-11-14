@@ -32,3 +32,6 @@ events.txt
 phpunit_*.txt
 trivy
 latest-app.zip
+# skrip bantu pengerjaan
+fase-*.ps1
+cek-fase6.ps1
