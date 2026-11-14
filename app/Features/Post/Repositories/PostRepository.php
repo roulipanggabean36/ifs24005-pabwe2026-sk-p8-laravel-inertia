@@ -126,11 +126,11 @@ class PostRepository implements PostRepositoryInterface
 
         if ($term !== '') {
             // Escape karakter khusus LIKE agar % dan _ diperlakukan literal.
-            $pattern = '%'.addcslashes($term, '\\%_').'%';
+            $pattern = '%'.addcslashes(mb_strtolower($term), '\\%_').'%';
 
             $query->where(function (Builder $builder) use ($pattern): void {
-                $builder->where('title', 'ILIKE', $pattern)
-                    ->orWhere('content', 'ILIKE', $pattern);
+                $builder->whereRaw("LOWER(title) LIKE ? ESCAPE '\\'", [$pattern])
+                    ->orWhereRaw("LOWER(content) LIKE ? ESCAPE '\\'", [$pattern]);
             });
         }
 

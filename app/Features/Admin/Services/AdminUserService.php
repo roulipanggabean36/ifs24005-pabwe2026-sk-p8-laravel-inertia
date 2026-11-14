@@ -25,11 +25,11 @@ class AdminUserService
         return User::query()
             ->withCount('posts')
             ->when($term !== '', function (Builder $query) use ($term): void {
-                $pattern = '%'.addcslashes($term, '\\%_').'%';
+                $pattern = '%'.addcslashes(mb_strtolower($term), '\\%_').'%';
 
                 $query->where(function (Builder $builder) use ($pattern): void {
-                    $builder->where('name', 'ILIKE', $pattern)
-                        ->orWhere('username', 'ILIKE', $pattern);
+                    $builder->whereRaw("LOWER(name) LIKE ? ESCAPE '\\'", [$pattern])
+                        ->orWhereRaw("LOWER(username) LIKE ? ESCAPE '\\'", [$pattern]);
                 });
             })
             ->orderBy('name')

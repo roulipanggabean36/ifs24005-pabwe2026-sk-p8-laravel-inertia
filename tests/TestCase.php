@@ -28,9 +28,11 @@ abstract class TestCase extends BaseTestCase
         $default = (string) $this->app['config']->get('database.default');
         $database = (string) $this->app['config']->get("database.connections.{$default}.database");
 
-        if ($default !== 'pgsql' || ! str_ends_with($database, '_test')) {
+        $aman = ($default === 'sqlite' && $database === ':memory:') || ($default === 'pgsql' && str_ends_with($database, '_test'));
+
+        if (! $aman) {
             throw new RuntimeException(sprintf(
-                'Test harus memakai PostgreSQL dengan nama database berakhiran "_test" (sekarang: %s / %s). Periksa phpunit.xml.',
+                'Test harus memakai SQLite in-memory atau PostgreSQL dengan nama database berakhiran "_test" (sekarang: %s / %s). Periksa phpunit.xml.',
                 $default,
                 $database,
             ));
